@@ -1,0 +1,51 @@
+# ========================
+# Build artifacts (CMake)
+# ========================
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+compile_commands.json
+install_manifest.txt
+
+# ========================
+# Executables & binaries
+# ========================
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.dylib
+
+# ========================
+# Object files
+# ========================
+*.o
+*.obj
+*.lo
+*.a
+
+# ========================
+# VS Code
+# ========================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/c_cpp_properties.json
+
+# ========================
+# OS / Editor junk
+# ========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ========================
+# Logs & runtime output
+# ========================
+logs/
+*.log
