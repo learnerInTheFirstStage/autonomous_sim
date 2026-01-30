@@ -1,1 +1,1 @@
-add_library(core INTERFACE)
+add_subdirectory(common)
