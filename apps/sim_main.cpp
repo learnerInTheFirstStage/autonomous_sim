@@ -1,16 +1,15 @@
 #include <iostream>
-#include "common/pose.h"
+#include "map/grid_map.h"
 
 int main() {
-    common::Pose pose;
-    pose.position.x = 1.0;
-    pose.position.y = 2.0;
-    pose.yaw = 0.5;
+    map::GridMap grid(10, 10, 1.0);
+    grid.SetOccupied(3, 3);
 
-    std::cout << "Pose: ("
-              << pose.position.x << ", "
-              << pose.position.y << "), yaw="
-              << pose.yaw << std::endl;
+    std::cout << "IS (3, 3) occupied? "
+              << grid.IsOccupied(3, 3) << std::endl;
+    
+    std::cout << "IS (5, 5) occupied? "
+              << grid.IsOccupied(5, 5) << std::endl;
     
     return 0;
 }
