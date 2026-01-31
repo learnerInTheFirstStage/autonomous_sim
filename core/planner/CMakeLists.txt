@@ -1,5 +1,6 @@
 add_library(planner
     src/planner.cpp
+    src/astar/astar_planner.cpp
 )
 
 target_include_directories(planner
