@@ -1,3 +1,4 @@
 add_subdirectory(common)
 add_subdirectory(map)
 add_subdirectory(planner)
+add_subdirectory(control)
