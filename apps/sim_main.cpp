@@ -1,15 +1,24 @@
 #include <iostream>
+#include "planner/astar/astar_planner.h"
 #include "map/grid_map.h"
 
 int main() {
-    map::GridMap grid(10, 10, 1.0);
-    grid.SetOccupied(3, 3);
+    map::GridMap map(10, 10, 1.0);
+    map.SetOccupied(3, 3);
+    map.SetOccupied(3, 4);
+    map.SetOccupied(3, 5);
 
-    std::cout << "IS (3, 3) occupied? "
-              << grid.IsOccupied(3, 3) << std::endl;
-    
-    std::cout << "IS (5, 5) occupied? "
-              << grid.IsOccupied(5, 5) << std::endl;
-    
-    return 0;
+    planner::AStarPlanner planner;
+    planner::Path path;
+
+    common::Point2D start({0, 0});
+    common::Point2D goal({7, 7});
+
+    if (planner.Plan(map, start, goal, path)) {
+        for (auto& p : path.points) {
+            std::cout << "(" << p.x << ", " << p.y << ")\n";
+        }
+    } else {
+        std::cout << "Planning failed\n";
+    }
 }
