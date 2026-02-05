@@ -2,10 +2,12 @@
 #include "planner/astar/astar_node.h"
 #include "common/point.h"
 
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <cmath>
 #include <vector>
+#include <unordered_set>
 
 namespace planner {
 
@@ -28,17 +30,18 @@ bool AStarPlanner::Plan(
     const common::Point2D& start,
     const common::Point2D& goal,
     Path& path) {
-        
+    
+    std::unordered_set<long long> closed;
     int sx = static_cast<int>(start.x);
     int sy = static_cast<int>(start.y);
     int gx = static_cast<int>(goal.x);
     int gy = static_cast<int>(goal.y);
 
     std::priority_queue<AStarNode*, std::vector<AStarNode*>, NodeCompare> open;
-    std::unordered_map<int, AStarNode*> all_nodes;
+    std::unordered_map<long long, AStarNode*> all_nodes;
 
     auto key = [](int x, int y) {
-        return y * 100000 + x;  // simple hash 
+        return (static_cast<long long>(x) << 32) | (unsigned int)y;
     };
 
     AStarNode* start_node = new AStarNode(sx, sy);
@@ -48,8 +51,8 @@ bool AStarPlanner::Plan(
     open.push(start_node);
     all_nodes[key(sx, sy)] = start_node;
 
-    const int dx[4] = {1, -1, 0, 0};
-    const int dy[4] = {0, 0, 1, -1};
+    const int dx[8] = {1, -1, 0, 0, 1, 1, -1, -1};
+    const int dy[8] = {0, 0, 1, -1, 1, -1, 1, -1};
 
     AStarNode* goal_node = nullptr;
 
@@ -57,12 +60,20 @@ bool AStarPlanner::Plan(
         AStarNode* current = open.top();
         open.pop();
 
+        long long current_key = key(current->x, current->y);
+
+        if (closed.count(current_key)) {
+            continue;
+        }
+
+        closed.insert(current_key);
+
         if (current->x == gx && current->y == gy) {
             goal_node = current;
             break;
         }
 
-        for (int i = 0; i < 4; ++i) {
+        for (int i = 0; i < 8; ++i) {
             int nx = current->x + dx[i];
             int ny = current->y + dy[i];
 
@@ -70,8 +81,14 @@ bool AStarPlanner::Plan(
                 continue;
             }
 
-            int k = key(nx, ny);
-            double new_g = current->g + 1.0;
+            long long k = key(nx, ny);
+
+            if (closed.count(k)) {
+                continue;
+            }
+
+            double step = (i < 4) ? 1.0 : 1.414;
+            double new_g = current->g + step;
 
             if (all_nodes.count(k) == 0) {
                 AStarNode* node = new AStarNode(nx, ny);
@@ -99,6 +116,10 @@ bool AStarPlanner::Plan(
     }
 
     std::reverse(path.points.begin(), path.points.end());
+
+    for (auto& kv : all_nodes) {
+        delete kv.second;
+    }
 
     return true;
 
