@@ -3,6 +3,7 @@
 #include "planner/astar/astar_planner.h"
 #include "map/grid_map.h"
 #include "control/pure_pursuit.h"
+#include "vehicle/vehicle_model.h"
 
 int main() {
     map::GridMap map(10, 10, 1.0);
@@ -24,18 +25,29 @@ int main() {
 
     control::PurePursuitController controller(1.5);
 
-    common::Point2D current = start;
+    vehicle::VehicleState state;
+    state.x = start.x;
+    state.y = start.y;
+    state.heading = 0.0;
+    state.velocity = 0.0;
 
-    for (int i = 0; i < 10; i ++ ) {
-        auto cmd = controller.ComputeCommand(current, path);
+    vehicle::VehicleModel vehicle_model;
+
+    for (int i = 0; i < 20; i ++ ) {
+        auto cmd = controller.ComputeCommand(
+            common::Point2D({state.x, state.y}), path);
+        
+        vehicle::ControlCommand vcmd;
+        vcmd.steering_angle = cmd.steering_angle;
+        vcmd.speed = cmd.speed;
+
+        vehicle_model.Update(state, vcmd);
 
         std::cout << "Step " << i
-                  << " steering: " << cmd.steering_angle
-                  << " speed: " << cmd.speed << std::endl;
-
-        // Simple simulation: Move one step ahead to goal
-        current.x += std::cos(cmd.steering_angle);
-        current.y += std::sin(cmd.steering_angle);
+                  << " x: " << state.x
+                  << " y: " << state.y
+                  << " heading: " << state.heading
+                  << std::endl;
     }
 
     return 0;
