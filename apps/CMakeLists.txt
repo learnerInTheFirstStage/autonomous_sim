@@ -1,5 +1,5 @@
 add_executable(sim_main sim_main.cpp)
 
 target_link_libraries(sim_main 
-    PRIVATE common map planner control
+    PRIVATE common map planner control vehicle
 )
