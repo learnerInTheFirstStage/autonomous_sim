@@ -11,4 +11,5 @@ target_link_libraries(control
     PUBLIC
         common
         planner
+        vehicle
 )
